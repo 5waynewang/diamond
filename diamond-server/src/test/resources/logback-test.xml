@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="1 seconds">
+	<jmxConfigurator />
+
+	<!-- direct log messages to stdout -->
+	<appender debug="true" name="stdout"
+		class="ch.qos.logback.core.ConsoleAppender">
+		<Target>System.out</Target>
+		<encoder>
+			<pattern>%5p [%t] %d{HH:mm:ss.SSS} %c{0}:%L - %m %n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.taobao.diamond" level="DEBUG" />
+
+	<root level="WARN">
+		<appender-ref ref="stdout" />
+	</root>
+</configuration>

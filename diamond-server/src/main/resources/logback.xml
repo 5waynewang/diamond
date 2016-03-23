@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scanPeriod="10 minutes">
+
+	<appender name="ErrorFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/ouer/logs/diamond/error.log</file>
+		<Append>true</Append>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/ouer/logs/diamond/%d{yyyy-MM-dd}/error.log
+			</fileNamePattern>
+			<maxHistory>50</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%t] %5p |-%C:%L - %m %n</pattern>
+		</encoder>
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>ERROR</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+	<appender name="RootFile"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/ouer/logs/diamond/root.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<FileNamePattern>/ouer/logs/diamond/%d{yyyy-MM-dd}/root.log
+			</FileNamePattern>
+			<maxHistory>30</maxHistory>
+		</rollingPolicy>
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%t] %5p |-%C:%L - %m %n</pattern>
+		</encoder>
+	</appender>
+
+	<logger name="com.taobao.diamond" level="INFO" />
+
+	<root level="ERROR">
+		<appender-ref ref="RootFile" />
+		<appender-ref ref="ErrorFile" />
+	</root>
+</configuration>

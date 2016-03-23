@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+	http://www.springframework.org/schema/context 
+    http://www.springframework.org/schema/context/spring-context-4.1.xsd"
+	default-autowire="byName">
+
+	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
+		init-method="init" destroy-method="close" lazy-init="true">
+		<property name="url">
+			<value><![CDATA[${jdbc.url}]]></value>
+		</property>
+		<property name="username" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+
+		<property name="initialSize" value="5" />
+		<property name="minIdle" value="5" />
+		<property name="maxActive" value="${jdbc.maxActive}" />
+
+		<property name="maxWait" value="60000" />
+
+		<property name="timeBetweenEvictionRunsMillis" value="60000" />
+
+		<property name="minEvictableIdleTimeMillis" value="300000" />
+
+		<property name="validationQuery" value="SELECT 'x'" />
+		<property name="testWhileIdle" value="true" />
+		<property name="testOnBorrow" value="false" />
+		<property name="testOnReturn" value="false" />
+
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="600" />
+		<property name="logAbandoned" value="true" />
+
+		<property name="filters" value="stat,config" />
+		<property name="connectionProperties" value="config.decrypt=true" />
+	</bean>
+	
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource" />
+		<property name="maxRows" value="10000" />
+		<property name="queryTimeout" value="5" />
+	</bean>
+</beans>

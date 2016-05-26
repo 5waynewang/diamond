@@ -42,6 +42,7 @@ public class DiamondClientPool {
 			final DiamondManager oldDiamondManager = cache.putIfAbsent(managerKey, diamondManager);
 
 			if (oldDiamondManager != null) {
+				diamondManager.close();//关闭刚创建的
 				diamondManager = oldDiamondManager;
 			}
 		}

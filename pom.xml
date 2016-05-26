@@ -306,4 +306,11 @@
             <url>http://nexus.ixiaopu.com:8081/nexus/content/repositories/xiangqu-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+	
+	<repositories>
+		<repository>
+			<id>xiangqu</id>
+			<url>http://nexus.ixiaopu.com:8081/nexus/content/groups/public-xiangqu/</url>
+		</repository>
+	</repositories>
 </project>

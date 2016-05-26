@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.taobao.diamond.client.impl.DiamondClientFactory;
 import com.taobao.diamond.manager.DiamondManager;
 import com.taobao.diamond.manager.ManagerListener;
 import com.taobao.diamond.manager.impl.DefaultDiamondManager;
@@ -21,13 +20,6 @@ import com.taobao.diamond.manager.impl.DefaultDiamondManager;
  * @since 4:22:32 PM Jan 7, 2015
  */
 public class DiamondClients {
-
-//	static final String DEFAULT_DOMAIN = "config.ixiaopu.com";
-//	static {
-//		final DiamondConfigure configure = DiamondClientFactory.getSingletonDiamondSubscriber().getDiamondConfigure();
-//		configure.setConfigServerAddress(DEFAULT_DOMAIN);
-//		configure.addDomainName(DEFAULT_DOMAIN);
-//	}
 
 	@SuppressWarnings("unchecked")
 	static <T> List<T> toList(T... objs) {

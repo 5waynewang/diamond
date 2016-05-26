@@ -6,12 +6,15 @@ import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.naming.resources.VirtualDirContext;
 
+import com.taobao.diamond.common.Constants;
+
 public class EmbeddedServer {
 
 	public static void main(String[] args) throws Exception {
 		System.setProperty("profiles.active", "dev");
+
 		Tomcat tomcat = new Tomcat();
-		tomcat.setPort(8080);
+		tomcat.setPort(Constants.DEFAULT_PORT);
 		tomcat.setBaseDir("target/tomcat");
 		tomcat.getConnector().setURIEncoding("UTF-8");
 		Context ctx = tomcat.addWebapp("/", new File("src/main/webapp").getAbsolutePath());

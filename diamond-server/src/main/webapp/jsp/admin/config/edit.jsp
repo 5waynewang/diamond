@@ -24,7 +24,7 @@
 		</style>
 </head>
 <body>
-<c:url var="updateConfigUrl" value="admin.do" >
+<c:url var="updateConfigUrl" value="admin" >
     <c:param name="method" value="updateConfig" />
 </c:url>
 <c:import url="/jsp/common/message.jsp"/>
@@ -54,7 +54,7 @@
     </table>
  </form>
  <!-- 上传表单 -->
- <c:url var="reuploadUrl" value="admin.do" >
+ <c:url var="reuploadUrl" value="admin" >
     <c:param name="method" value="reupload" />
 </c:url>
 <form action="/${reuploadUrl}" method="post" enctype="multipart/form-data" id="upload-form">

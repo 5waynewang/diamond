@@ -17,6 +17,9 @@ public class EmbeddedServer {
 		tomcat.setPort(Constants.DEFAULT_PORT);
 		tomcat.setBaseDir("target/tomcat");
 		tomcat.getConnector().setURIEncoding("UTF-8");
+		tomcat.getConnector().setAttribute("keepAliveTimeout", 2 * 60 * 1000);
+		tomcat.getConnector().setAttribute("maxKeepAliveRequests", 200);
+		
 		Context ctx = tomcat.addWebapp("/", new File("src/main/webapp").getAbsolutePath());
 
 		// declare an alternate location for your "WEB-INF/classes" dir:

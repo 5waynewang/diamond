@@ -38,11 +38,11 @@
               <td>
                   <c:out value="${user.value}" />
                </td>
-              <c:url var="changePasswordUrl" value="admin.do" >
+              <c:url var="changePasswordUrl" value="admin" >
                   <c:param name="method" value="changePassword" />
                   <c:param name="userName" value="${user.key}" />
               </c:url>
-              <c:url var="deleteUserUrl" value="admin.do" >
+              <c:url var="deleteUserUrl" value="admin" >
                   <c:param name="method" value="deleteUser" />
                   <c:param name="userName" value="${user.key}" />
                   <c:param name="password" value="${user.value}" />
@@ -57,7 +57,7 @@
     </c:if>
   </p>
   <p align='center'>
-    <a href="/<c:url value='jsp/admin/user/new.jsp' />">添加用户</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href="/<c:url value='admin.do?method=reloadUser' />">重新加载用户信息</a>
+    <a href="/<c:url value='jsp/admin/user/new.jsp' />">添加用户</a> &nbsp;&nbsp;&nbsp;&nbsp;<a href="/<c:url value='admin?method=reloadUser' />">重新加载用户信息</a>
   </p>
 </body>
 </html>

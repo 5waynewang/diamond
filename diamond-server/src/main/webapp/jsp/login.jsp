@@ -8,7 +8,7 @@
 <body>
 <c:import url="/jsp/common/message.jsp"/>
 <div align='center'>
-<c:url var="url" value="login.do" >
+<c:url var="url" value="login" >
     <c:param name="method" value="login" />
 </c:url>
 <form method='post' action="/${url}">

@@ -17,36 +17,6 @@
 			<artifactId>diamond-utils</artifactId>
 		</dependency>
 		<!-- apache commons -->
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-		<!-- httpclient -->
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpcore</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpmime</artifactId>
-		</dependency>
-		<!-- commons-jkit -->
-		<dependency>
-		  <groupId>commons-jkit</groupId>
-		  <artifactId>commons-httpclient</artifactId>
-		</dependency>
 		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>

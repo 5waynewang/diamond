@@ -27,7 +27,7 @@
 <c:import url="/jsp/common/message.jsp"/>
 <center><h1><strong>新增配置信息</strong></h1></center>
 <p align='center'>
-     <c:url var="uploadUrl" value="admin.do" >
+     <c:url var="uploadUrl" value="admin" >
         <c:param name="method" value="upload" />
      </c:url>
      <form action="/${uploadUrl}" method="post" enctype="multipart/form-data" id="upload-form">

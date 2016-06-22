@@ -8,7 +8,7 @@
 		<param-name>spring.profiles.active</param-name>
 		<param-value>${profiles.active}</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
@@ -22,6 +22,10 @@
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
 
+	<listener>
+		<listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+	</listener>
+
 	<filter>
 		<filter-name>encodingFilter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -31,15 +35,15 @@
 		</init-param>
 	</filter>
 
+	<filter-mapping>
+		<filter-name>encodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
 	<filter>
 		<filter-name>authorizationFilter</filter-name>
 		<filter-class>com.taobao.diamond.server.listener.AuthorizationFilter</filter-class>
 	</filter>
-
-	<filter-mapping>
-		<filter-name>encodingFilter</filter-name>
-		<url-pattern>*.do</url-pattern>
-	</filter-mapping>
 
 	<filter-mapping>
 		<filter-name>authorizationFilter</filter-name>
@@ -48,26 +52,26 @@
 
 	<filter-mapping>
 		<filter-name>authorizationFilter</filter-name>
-		<url-pattern>/admin.do</url-pattern>
+		<url-pattern>/admin</url-pattern>
 	</filter-mapping>
 
 	<servlet>
-		<servlet-name>diamond</servlet-name>
+		<servlet-name>springmvc</servlet-name>
 		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
+
+	<servlet-mapping>
+		<servlet-name>springmvc</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
 	<servlet>
 		<servlet-name>ConfigServlet</servlet-name>
 		<servlet-class>com.taobao.diamond.server.controller.ConfigServlet</servlet-class>
 		<load-on-startup>-1</load-on-startup>
 	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>diamond</servlet-name>
-		<url-pattern>*.do</url-pattern>
-	</servlet-mapping>
-	
+
 	<servlet-mapping>
 		<servlet-name>ConfigServlet</servlet-name>
 		<url-pattern>/config.co</url-pattern>
@@ -76,11 +80,11 @@
 	<session-config>
 		<session-timeout>300</session-timeout>
 		<cookie-config>
-            <name>JSESSIONID</name>
-            <path>/</path>
-        </cookie-config>
+			<name>JSESSIONID</name>
+			<path>/</path>
+		</cookie-config>
 	</session-config>
-	
+
 	<welcome-file-list>
 		<welcome-file>/jsp/login.jsp</welcome-file>
 	</welcome-file-list>

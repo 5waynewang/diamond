@@ -28,7 +28,7 @@
 <c:import url="/jsp/common/message.jsp"/>
 <center><h1><strong>设置拒绝请求参数</strong></h1></center>
 <p align='center'>
-     <c:url var="setRefuseRequestCountUrl" value="admin.do" >
+     <c:url var="setRefuseRequestCountUrl" value="admin" >
         <c:param name="method" value="setRefuseRequestCount" />
      </c:url>
      <form action="/${setRefuseRequestCountUrl}" method="post" id="count-form">

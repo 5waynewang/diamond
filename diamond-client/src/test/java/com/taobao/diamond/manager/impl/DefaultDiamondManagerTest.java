@@ -25,10 +25,10 @@ public class DefaultDiamondManagerTest {
 
 	@Before
 	public void before() {
-		this.ddm = DiamondClients.createSafeDiamondManager("XIANGQU", "GLOBAL", new ManagerListenerAdapter() {
+		this.ddm = DiamondClients.createSafeDiamondManager("XIANGQU", "MEMCACHED", new ManagerListenerAdapter() {
 			@Override
 			public void receiveConfigInfo(String configInfo) {
-				System.out.println(System.currentTimeMillis() + " >>> " + configInfo);
+				System.out.println(System.currentTimeMillis() + " received >>> " + configInfo);
 			}
 		});
 	}

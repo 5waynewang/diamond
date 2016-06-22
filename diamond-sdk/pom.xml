@@ -17,16 +17,7 @@
 			<groupId>${project.groupId}</groupId>
 			<artifactId>diamond-utils</artifactId>
 		</dependency>
-		<!-- commons-jkit -->
-		<dependency>
-			<groupId>commons-jkit</groupId>
-			<artifactId>commons-httpclient</artifactId>
-		</dependency>
 		<!-- apache commons -->
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
 		<!-- junit -->
 		<dependency>
 			<groupId>junit</groupId>

@@ -34,14 +34,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicHeader;
-import org.apache.http.message.BasicNameValuePair;
 
 import com.taobao.diamond.client.DiamondConfigure;
 import com.taobao.diamond.client.DiamondSubscriber;
@@ -52,12 +48,11 @@ import com.taobao.diamond.client.processor.SnapshotConfigInfoProcessor;
 import com.taobao.diamond.common.Constants;
 import com.taobao.diamond.configinfo.CacheData;
 import com.taobao.diamond.configinfo.ConfigureInfomation;
+import com.taobao.diamond.httpclient.HttpClientFactory;
+import com.taobao.diamond.httpclient.HttpInvokeResult;
 import com.taobao.diamond.md5.MD5;
 import com.taobao.diamond.utils.LoggerInit;
 import com.taobao.diamond.utils.SimpleCache;
-import commons.httpclient.HttpInvokeResult;
-import commons.httpclient.PoolingHttpClients;
-
 
 /**
  * 缺省的DiamondSubscriber
@@ -113,10 +108,14 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
     private volatile boolean bFirstCheck = true;
 
 
-    public DefaultDiamondSubscriber(SubscriberListener subscriberListener) {
-        this.subscriberListener = subscriberListener;
-        this.diamondConfigure = new DiamondConfigure();
-    }
+	public DefaultDiamondSubscriber(SubscriberListener subscriberListener) {
+		this(subscriberListener, new DiamondConfigure());
+	}
+
+	public DefaultDiamondSubscriber(SubscriberListener subscriberListener, DiamondConfigure diamondConfigure) {
+		this.subscriberListener = subscriberListener;
+		this.diamondConfigure = diamondConfigure;
+	}
 
 
     /**
@@ -213,7 +212,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
                 }
             }
 
-        }, bFirstCheck ? 60 : diamondConfigure.getPollingIntervalTime(), TimeUnit.SECONDS);
+        }, bFirstCheck ? 10 : diamondConfigure.getPollingIntervalTime(), TimeUnit.SECONDS);
         bFirstCheck = false;
     }
 
@@ -537,7 +536,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
 
         CacheData cacheData = getCacheData(dataId, group);
 
-        Collection<Header> headers = configureHttpHeaders(skipContentCache, cacheData);
+        Collection<Pair<String, ?>> headers = configureHttpHeaders(skipContentCache, cacheData);
         
         // 总的重试次数
         int retryTimes = this.getDiamondConfigure().getRetrieveDataRetryTimes();
@@ -560,10 +559,9 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
 
             final String domain = diamondConfigure.getDomainNameList().get(this.domainNamePos.get());
             final int port = diamondConfigure.getPort();
-            final String url = String.format(Constants.CONFIG_HTTP_URL_FORMAT, domain, port, uri);
-
+            final String addr = domain + ":" + port;
             try {
-                final HttpInvokeResult result = PoolingHttpClients.get(url, onceTimeOut, headers);
+                final HttpInvokeResult result = HttpClientFactory.getHttpClient().get(addr, uri, headers, onceTimeOut);
 
                 switch (result.getStatusCode()) {
 
@@ -662,18 +660,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
             throw new RuntimeException("RP_OK获取了错误的配置信息");
         }
 
-        String md5 = null;//md5 = result.getHeader(Constants.CONTENT_MD5);
-        
-        final Header[] headers = result.getHeaders(Constants.CONTENT_MD5);
-        if (ArrayUtils.isNotEmpty(headers)) {
-        	for (Header header : headers) {
-        		if (md5 == null) {
-        			md5 = header.getValue();
-        		}
-        		
-        		log.info(header.getName() + "=" + header.getValue());
-        	}
-        }
+        String md5 = result.getHeader(Constants.CONTENT_MD5);
         if (null == md5) {
             throw new RuntimeException("RP_OK返回的结果中没有MD5码, " + configInfo);
         }
@@ -706,18 +693,18 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
     }
 
 
-    private Collection<Header> configureHttpHeaders(boolean skipContentCache, CacheData cacheData) {
-    	final Collection<Header> headers = new ArrayList<Header>();
+    private Collection<Pair<String, ?>> configureHttpHeaders(boolean skipContentCache, CacheData cacheData) {
+    	final Collection<Pair<String, ?>> headers = new ArrayList<>();
         if (skipContentCache && null != cacheData) {
             if (null != cacheData.getLastModifiedHeader() && Constants.NULL != cacheData.getLastModifiedHeader()) {
-                headers.add(new BasicHeader(Constants.IF_MODIFIED_SINCE, cacheData.getLastModifiedHeader()));
+                headers.add(Pair.of(Constants.IF_MODIFIED_SINCE, cacheData.getLastModifiedHeader()));
             }
             if (null != cacheData.getMd5() && Constants.NULL != cacheData.getMd5()) {
-                headers.add(new BasicHeader(Constants.CONTENT_MD5, cacheData.getMd5()));
+                headers.add(Pair.of(Constants.CONTENT_MD5, cacheData.getMd5()));
             }
         }
 
-        headers.add(new BasicHeader(Constants.ACCEPT_ENCODING, "gzip,deflate"));
+        headers.add(Pair.of(Constants.ACCEPT_ENCODING, "gzip,deflate"));
         return headers;
     }
 
@@ -746,8 +733,8 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
             return null;
         }
 
-        final Collection<NameValuePair> params = new ArrayList<NameValuePair>();
-        params.add(new BasicNameValuePair(Constants.PROBE_MODIFY_REQUEST, probeUpdateString));
+        final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        parameters.add(Pair.of(Constants.PROBE_MODIFY_REQUEST, probeUpdateString));
         
         while (0 == timeout || timeout > waitTime) {
             // 设置超时时间
@@ -756,10 +743,9 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
             
             final String domain = diamondConfigure.getDomainNameList().get(this.domainNamePos.get());
             final int port = diamondConfigure.getPort();
-            final String url = String.format(Constants.CONFIG_HTTP_URL_FORMAT, domain, port, Constants.HTTP_URI_FILE);
-
+            final String addr = domain + ":" + port;
             try {
-            	final HttpInvokeResult result = PoolingHttpClients.post(url, params, onceTimeOut);
+            	final HttpInvokeResult result = HttpClientFactory.getHttpClient().post(addr, Constants.HTTP_URI_FILE, parameters, onceTimeOut);
 
                 switch (result.getStatusCode()) {
                 case SC_OK: {
@@ -901,7 +887,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
             try {
                 is = new ByteArrayInputStream(result.getResponseBody());
                 gzin = new GZIPInputStream(is);
-                isr = new InputStreamReader(gzin, result.getResponseCharset()); // 设置读取流的编码格式，自定义编码
+                isr = new InputStreamReader(gzin, Constants.ENCODE);
                 br = new BufferedReader(isr);
                 char[] buffer = new char[4096];
                 int readlen = -1;
@@ -985,7 +971,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
         Set<String> modifiedDataIdSet = new HashSet<String>();
 
         try {
-            modifiedDataIdsString = URLDecoder.decode(modifiedDataIdsString, "UTF-8");
+            modifiedDataIdsString = URLDecoder.decode(modifiedDataIdsString, Constants.ENCODE);
         }
         catch (Exception e) {
             log.error("解码modifiedDataIdsString出错", e);

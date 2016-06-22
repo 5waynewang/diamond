@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.diamond.common.Constants;
 
@@ -47,7 +47,7 @@ public class DiamondConfigure {
     // 获取数据时的重试次数
     private int retrieveDataRetryTimes = Integer.MAX_VALUE / 10;
 
-    private String configServerAddress = "config.ixiaopu.com";
+    private String configServerAddress = Constants.DEFAULT_DOMAINNAME;
     private int configServerPort = Constants.DEFAULT_PORT;
 
     // 本地数据保存路径

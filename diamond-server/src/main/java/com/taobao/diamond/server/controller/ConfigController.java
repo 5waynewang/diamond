@@ -19,9 +19,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.apache.commons.lang3.StringUtils;
 
 import com.taobao.diamond.common.Constants;
 import com.taobao.diamond.server.service.ConfigService;
@@ -35,18 +33,16 @@ import com.taobao.diamond.server.utils.GlobalCounter;
  * @author boyan
  * @date 2010-5-4
  */
-@Controller
 public class ConfigController {
 
-    @Autowired
     private ConfigService configService;
 
-    @Autowired
     private DiskService diskService;
 
 
     public String getConfig(HttpServletRequest request, HttpServletResponse response, String dataId, String group) {
         response.setHeader("Content-Type", "text/plain;charset=" + Constants.ENCODE);
+        
         final String address = getRemortIP(request);
         if (address == null) {
             // 未找到远端地址，返回400错误
@@ -87,6 +83,7 @@ public class ConfigController {
 
     public String getProbeModifyResult(HttpServletRequest request, HttpServletResponse response, String probeModify) {
         response.setHeader("Content-Type", "text/html;charset=" + Constants.ENCODE);
+        
         final String address = getRemortIP(request);
         if (address == null) {
             // 未找到远端地址，返回400错误
@@ -127,18 +124,8 @@ public class ConfigController {
     }
 
 
-    public ConfigService getConfigService() {
-        return configService;
-    }
-
-
     public void setConfigService(ConfigService configService) {
         this.configService = configService;
-    }
-
-
-    public DiskService getDiskService() {
-        return diskService;
     }
 
 

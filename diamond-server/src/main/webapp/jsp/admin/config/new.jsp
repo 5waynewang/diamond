@@ -28,7 +28,7 @@
 <c:import url="/jsp/common/message.jsp"/>
 <center><h1><strong>新增配置信息</strong></h1></center>
 <p align='center'>
-     <c:url var="postConfigUrl" value="admin.do" >
+     <c:url var="postConfigUrl" value="admin" >
         <c:param name="method" value="postConfig" />
      </c:url>
      <form action="/${postConfigUrl}" method="post" id="config-form">

@@ -27,7 +27,7 @@
 <c:import url="/jsp/common/message.jsp"/>
 <center><h1><strong>新增用户信息</strong></h1></center>
 <p align='center'>
-     <c:url var="addUserUrl" value="admin.do" >
+     <c:url var="addUserUrl" value="admin" >
         <c:param name="method" value="addUser" />
      </c:url>
      <form action="/${addUserUrl}" method="post" id="user-form">

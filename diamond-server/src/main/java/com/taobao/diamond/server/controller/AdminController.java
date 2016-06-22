@@ -16,7 +16,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +46,7 @@ import com.taobao.diamond.utils.JSONUtils;
  * @date 2010-5-6
  */
 @Controller
-@RequestMapping("/admin.do")
+@RequestMapping("/admin")
 public class AdminController {
 
     private static final Log log = LogFactory.getLog(AdminController.class);

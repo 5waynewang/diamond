@@ -22,15 +22,14 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import com.taobao.diamond.client.DiamondConfigure;
 import com.taobao.diamond.common.Constants;
-import commons.httpclient.HttpInvokeResult;
-import commons.httpclient.PoolingHttpClients;
-
+import com.taobao.diamond.httpclient.HttpClientFactory;
+import com.taobao.diamond.httpclient.HttpInvokeResult;
 
 public class ServerAddressProcessor {
     private static final Log log = LogFactory.getLog(ServerAddressProcessor.class);
@@ -300,12 +299,9 @@ public class ServerAddressProcessor {
                 port = Constants.DEFAULT_PORT;
             }
         }
-        String serverAddressUrl = Constants.CONFIG_HTTP_URI_FILE;
-        
-        final String url = String.format(Constants.CONFIG_HTTP_URL_FORMAT, configServerAddress, port, serverAddressUrl);
-        
+        final String addr = configServerAddress + ":" + port;
         try {
-        	final HttpInvokeResult result = PoolingHttpClients.get(url, diamondConfigure.getOnceTimeout());
+        	final HttpInvokeResult result = HttpClientFactory.getHttpClient().get(addr, Constants.CONFIG_HTTP_URI_FILE, null, diamondConfigure.getOnceTimeout());
         	final String responseBodyAsString = result.getResponseBodyAsString();
             if (result.isSuccess() && StringUtils.isNotBlank(responseBodyAsString)) {
                 List<String> newDomainNameList = new LinkedList<String>();
@@ -316,13 +312,12 @@ public class ServerAddressProcessor {
                     }
                 }
                 if (newDomainNameList.size() > 0) {
-                    log.debug("更新使用的服务器列表");
                     this.diamondConfigure.setDomainNameList(newDomainNameList);
                     return true;
                 }
             }
-            else {
-                log.warn("没有可用的新服务器列表");
+            else if (log.isInfoEnabled()) {
+                log.info("没有可用的新服务器列表, " + result);
             }
         }
         catch (Exception e) {

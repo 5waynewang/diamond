@@ -44,26 +44,35 @@ public class Constants {
     public static final String IF_MODIFIED_SINCE = "If-Modified-Since";
 
     public static final String SPACING_INTERVAL = "client-spacing-interval";
+    
+    public static final String OPAQUE = "opaque";
 
     public static final int POLLING_INTERVAL_TIME = 15;// 秒
 
     public static final int ONCE_TIMEOUT = 5000;// 毫秒
 
-    public static final int CONN_TIMEOUT = 2000;// 毫秒
+    public static final int CONN_TIMEOUT = 5000;// 毫秒
 
     public static final int RECV_WAIT_TIMEOUT = ONCE_TIMEOUT * 5;// 毫秒
+    
+    public static final int CLIENT_CHANNEL_MAX_IDLE_TIME_SECONDS = 120;// 秒
+    
+    public static final int MAX_CONTENT_LENGTH = 1024 * 1024;// 1MB
 
     public static final String HTTP_URI_FILE = "/config.co";
+    
+    public static final String HTTP_PROTOCOL_PREFIX = "http://";
 
     public static final String CONFIG_HTTP_URI_FILE = "/ServerNodes";
 
     public static final String ENCODE = "UTF-8";
     
-    public static final String CONFIG_HTTP_URL_FORMAT = "http://%s:%s%s";
-
     public static final String LINE_SEPARATOR = Character.toString((char) 1);
 
     public static final String WORD_SEPARATOR = Character.toString((char) 2);
+    
+    public static final int SC_OK = 200;
+    public static final int SC_REQUEST_TIMEOUT = 408;
 
     /*
      * 批量操作时, 单条数据的状态码

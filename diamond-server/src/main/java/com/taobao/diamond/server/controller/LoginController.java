@@ -28,7 +28,7 @@ import com.taobao.diamond.server.service.AdminService;
  * @date 2010-5-6
  */
 @Controller
-@RequestMapping("/login.do")
+@RequestMapping("/login")
 public class LoginController {
     @Autowired
     private AdminService adminService;

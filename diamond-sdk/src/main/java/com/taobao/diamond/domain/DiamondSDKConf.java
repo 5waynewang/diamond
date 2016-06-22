@@ -11,12 +11,10 @@ package com.taobao.diamond.domain;
 
 import java.util.List;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 
 public class DiamondSDKConf {
-
-    private static final long serialVersionUID = 8378550702596810462L;
 
     private String serverId;
 

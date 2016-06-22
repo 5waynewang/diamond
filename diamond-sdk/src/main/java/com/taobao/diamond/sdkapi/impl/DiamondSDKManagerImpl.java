@@ -17,7 +17,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -25,13 +24,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.http.Header;
-import org.apache.http.HttpStatus;
-import org.apache.http.message.BasicHeader;
 
 import com.alibaba.fastjson.TypeReference;
 import com.taobao.diamond.common.Constants;
@@ -43,13 +40,12 @@ import com.taobao.diamond.domain.DiamondConf;
 import com.taobao.diamond.domain.DiamondSDKConf;
 import com.taobao.diamond.domain.Page;
 import com.taobao.diamond.domain.PageContextResult;
+import com.taobao.diamond.httpclient.HttpClientFactory;
+import com.taobao.diamond.httpclient.HttpInvokeResult;
 import com.taobao.diamond.sdkapi.DiamondSDKManager;
 import com.taobao.diamond.util.PatternUtils;
 import com.taobao.diamond.util.RandomDiamondUtils;
 import com.taobao.diamond.utils.JSONUtils;
-import commons.httpclient.HttpInvokeResult;
-import commons.httpclient.PoolingHttpClients;
-
 
 /**
  * SDK对外开放的数据接口的功能实现
@@ -72,7 +68,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
 
     // 最后一次设置的 DiamondConf
     private volatile DiamondConf lastDiamondConf;
-
+    
     // 构造时需要传入连接超时时间，请求超时时间
     public DiamondSDKManagerImpl(int connection_timeout, int require_timeout) throws IllegalArgumentException {
         if (connection_timeout < 0)
@@ -87,9 +83,9 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
     }
 
     
-    private String getFullUrl(String uri) {
-    	return String.format(Constants.CONFIG_HTTP_URL_FORMAT, lastDiamondConf.getDiamondIp(), lastDiamondConf.getDiamondPort()) + uri;
-    }
+	private String getAddr() {
+		return lastDiamondConf.getDiamondIp() + ":" + lastDiamondConf.getDiamondPort();
+	}
 
     /**
      * 使用指定的diamond来推送数据
@@ -235,13 +231,13 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
                     + ")进行推送");
 
         // 设置参数
-    	final Map<String, Object> params = new HashMap<String, Object>();
-    	params.put("dataId", dataId);
-    	params.put("group", groupName);
-    	params.put("content", context);
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	parameters.add(Pair.of("method", "postConfig"));
+    	parameters.add(Pair.of("dataId", dataId));
+    	parameters.add(Pair.of("group", groupName));
+    	parameters.add(Pair.of("content", context));
         
-    	final String url = getFullUrl("/admin.do?method=postConfig");
-        final HttpInvokeResult result = PoolingHttpClients.post(url, params, require_timeout);
+        final HttpInvokeResult result = HttpClientFactory.getHttpClient().post(getAddr(), "/admin", parameters, require_timeout);
 
         // 配置对象
         ConfigInfo configInfo = new ConfigInfo();
@@ -257,13 +253,13 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         response.setReceiveResult(result.getResponseBodyAsString());
         response.setStatusCode(status);
         log.info("状态码：" + status + ",响应结果：" + response.getReceiveResult());
-        if (status == HttpStatus.SC_OK) {
+        if (status == Constants.SC_OK) {
             response.setSuccess(true);
             response.setStatusMsg("推送处理成功");
             log.info("推送处理成功, dataId=" + dataId + ",group=" + groupName + ",content=" + context + ",serverId="
                     + serverId);
         }
-        else if (status == HttpStatus.SC_REQUEST_TIMEOUT) {
+        else if (status == Constants.SC_REQUEST_TIMEOUT) {
             response.setSuccess(false);
             response.setStatusMsg("推送处理超时, 默认超时时间为:" + require_timeout + "毫秒");
             log.error("推送处理超时，默认超时时间为:" + require_timeout + "毫秒, dataId=" + dataId + ",group=" + groupName
@@ -308,13 +304,13 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         // 有数据，则修改
         else {
             // 设置参数
-        	final Map<String, Object> params = new HashMap<String, Object>();
-        	params.put("dataId", dataId);
-        	params.put("group", groupName);
-        	params.put("content", context);
+        	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        	parameters.add(Pair.of("method", "updateConfig"));
+        	parameters.add(Pair.of("dataId", dataId));
+        	parameters.add(Pair.of("group", groupName));
+        	parameters.add(Pair.of("content", context));
             
-        	final String url = getFullUrl("/admin.do?method=updateConfig");
-            final HttpInvokeResult httpInvokeResult = PoolingHttpClients.post(url, params, require_timeout);
+            final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().post(getAddr(), "/admin", parameters, require_timeout);
             
             // 配置对象
             ConfigInfo configInfo = new ConfigInfo();
@@ -330,12 +326,12 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             response.setReceiveResult(httpInvokeResult.getResponseBodyAsString());
             response.setStatusCode(status);
             log.info("状态码：" + status + ",响应结果：" + response.getReceiveResult());
-            if (status == HttpStatus.SC_OK) {
+            if (status == Constants.SC_OK) {
                 response.setSuccess(true);
                 response.setStatusMsg("推送修改处理成功");
                 log.info("推送修改处理成功");
             }
-            else if (status == HttpStatus.SC_REQUEST_TIMEOUT) {
+            else if (status == Constants.SC_REQUEST_TIMEOUT) {
                 response.setSuccess(false);
                 response.setStatusMsg("推送修改处理超时，默认超时时间为:" + require_timeout + "毫秒");
                 log.error("推送修改处理超时，默认超时时间为:" + require_timeout + "毫秒, dataId=" + dataId + ",group=" + groupName
@@ -387,12 +383,12 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             lastDiamondConf = diamondConf;
             
             // 设置参数
-        	final Map<String, Object> params = new HashMap<String, Object>();
-        	params.put("username", diamondConf.getDiamondUsername());
-        	params.put("password", diamondConf.getDiamondPassword());
+        	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        	parameters.add(Pair.of("method", "login"));
+        	parameters.add(Pair.of("username", diamondConf.getDiamondUsername()));
+        	parameters.add(Pair.of("password", diamondConf.getDiamondPassword()));
             
-        	final String url = getFullUrl("/login.do?method=login");
-            final HttpInvokeResult httpInvokeResult = PoolingHttpClients.post(url, params, require_timeout);
+            final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().post(getAddr(), "/login", parameters, require_timeout);
             
             log.info("使用diamondIp: " + diamondConf.getDiamondIp() + ",diamondPort: " + diamondConf.getDiamondPort()
                     + ",diamondUsername: " + diamondConf.getDiamondUsername() + ",diamondPassword: "
@@ -401,13 +397,13 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             int state = httpInvokeResult.getStatusCode();
             log.info("登录返回状态码：" + state);
             // 状态码为200，则登录成功,跳出循环并返回true
-            if (state == HttpStatus.SC_OK) {
+            if (state == Constants.SC_OK) {
                 log.info("第" + util.getRetry_times() + "次尝试成功");
                 flag = true;
                 break;
             }
 			else {
-				log.error("登录失败" + httpInvokeResult, httpInvokeResult.getException());
+				log.error("登录失败" + httpInvokeResult, httpInvokeResult.getCause());
 			}
         }
         if (flag == false) {
@@ -417,9 +413,9 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
     }
 
     static final String LIST_FORMAT_URL =
-            "/admin.do?method=listConfig&group=%s&dataId=%s&pageNo=%d&pageSize=%d";
+            "/admin?method=listConfig&group=%s&dataId=%s&pageNo=%d&pageSize=%d";
     static final String LIST_LIKE_FORMAT_URL =
-            "/admin.do?method=listConfigLike&group=%s&dataId=%s&pageNo=%d&pageSize=%d";
+            "/admin?method=listConfigLike&group=%s&dataId=%s&pageNo=%d&pageSize=%d";
 
 
     /**
@@ -464,13 +460,12 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             uri = String.format(LIST_FORMAT_URL, groupNamePattern, dataIdPattern, currentPage, sizeOfPerPage);
         }
 
-    	final String url = getFullUrl(uri);
-        final HttpInvokeResult httpInvokeResult = PoolingHttpClients.get(url, require_timeout, configureGetHeaders());
+        final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().get(getAddr(), uri, configureGetHeaders(), require_timeout);
         
         int status = httpInvokeResult.getStatusCode();
         response.setStatusCode(status);
         switch (status) {
-        case HttpStatus.SC_OK:
+        case Constants.SC_OK:
             String json = "";
             try {
                 json = getContent(httpInvokeResult).trim();
@@ -536,7 +531,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
                         + serverId + ",json=" + json, e);
             }
             break;
-        case HttpStatus.SC_REQUEST_TIMEOUT:
+        case Constants.SC_REQUEST_TIMEOUT:
             response.setSuccess(false);
             response.setStatusMsg("查询数据超时" + require_timeout + "毫秒");
             log.error("查询数据超时，默认超时时间为:" + require_timeout + "毫秒, dataId=" + dataIdPattern + ",group="
@@ -588,7 +583,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             try {
                 is = new ByteArrayInputStream(httpInvokeResult.getResponseBody());
                 gzin = new GZIPInputStream(is);
-                isr = new InputStreamReader(gzin, httpInvokeResult.getResponseCharset()); // 设置读取流的编码格式，自定义编码
+                isr = new InputStreamReader(gzin, Constants.ENCODE);
                 br = new BufferedReader(isr);
                 char[] buffer = new char[4096];
                 int readlen = -1;
@@ -640,14 +635,14 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             }
             contentBuilder.append(content);
         }
-        return StringEscapeUtils.unescapeHtml(contentBuilder.toString());
+        return StringEscapeUtils.unescapeHtml4(contentBuilder.toString());
     }
 
 
-    private Collection<Header> configureGetHeaders() {
-    	final Collection<Header> headers = new ArrayList<Header>();
-    	headers.add(new BasicHeader(Constants.ACCEPT_ENCODING, "gzip,deflate"));
-    	headers.add(new BasicHeader("Accept", "application/json"));
+    private Collection<Pair<String, ?>> configureGetHeaders() {
+    	final Collection<Pair<String, ?>> headers = new ArrayList<>();
+    	headers.add(Pair.of(Constants.ACCEPT_ENCODING, "gzip,deflate"));
+    	headers.add(Pair.of("Accept", "application/json"));
     	return headers;
     }
 
@@ -689,21 +684,20 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             return response;
         }
         log.info("使用processDelete(" + serverId + "," + id);
-        String uri = "/admin.do?method=deleteConfig&id=" + id;
+        String uri = "/admin?method=deleteConfig&id=" + id;
        
-        final String url = getFullUrl(uri);
-        final HttpInvokeResult httpInvokeResult = PoolingHttpClients.get(url, require_timeout, configureGetHeaders());
+        final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().get(getAddr(), uri, configureGetHeaders(), require_timeout);
         
         int status = httpInvokeResult.getStatusCode();
         response.setStatusCode(status);
         switch (status) {
-        case HttpStatus.SC_OK:
+        case Constants.SC_OK:
             response.setSuccess(true);
             response.setReceiveResult(getContent(httpInvokeResult));
             response.setStatusMsg("删除成功, url=" + uri);
             log.warn("删除配置数据成功, url=" + uri);
             break;
-        case HttpStatus.SC_REQUEST_TIMEOUT:
+        case Constants.SC_REQUEST_TIMEOUT:
             response.setSuccess(false);
             response.setStatusMsg("删除数据超时" + require_timeout + "毫秒");
             log.error("删除数据超时，默认超时时间为:" + require_timeout + "毫秒, id=" + id + ",serverId=" + serverId);
@@ -752,12 +746,12 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         }
         
         // 设置参数
-    	final Map<String, Object> params = new HashMap<String, Object>();
-    	params.put("dataIds", dataIdStr);
-    	params.put("group", groupName);
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	parameters.add(Pair.of("method", "batchQuery"));
+    	parameters.add(Pair.of("dataIds", dataIdStr));
+    	parameters.add(Pair.of("group", groupName));
         
-    	final String url = getFullUrl("/admin.do?method=batchQuery");
-        final HttpInvokeResult httpInvokeResult = PoolingHttpClients.post(url, params, require_timeout);
+        final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().post(getAddr(), "/admin", parameters, require_timeout);
 
         // 执行方法并返回http状态码
         int status = httpInvokeResult.getStatusCode();
@@ -765,7 +759,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         String responseMsg = httpInvokeResult.getResponseBodyAsString();
         response.setResponseMsg(responseMsg);
 
-        if (status == HttpStatus.SC_OK) {
+        if (status == Constants.SC_OK) {
             String json = null;
             try {
                 json = responseMsg;
@@ -797,7 +791,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             }
 
         }
-        else if (status == HttpStatus.SC_REQUEST_TIMEOUT) {
+        else if (status == Constants.SC_REQUEST_TIMEOUT) {
             response.setSuccess(false);
             response.setStatusMsg("batch query timeout, socket timeout(ms):" + require_timeout);
             log.error("batch query timeout, socket timeout(ms):" + require_timeout + ", serverId=" + serverId
@@ -845,12 +839,12 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         }
 
         // 设置参数
-    	final Map<String, Object> params = new HashMap<String, Object>();
-    	params.put("allDataIdAndContent", allDataIdAndContent);
-    	params.put("group", groupName);
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	parameters.add(Pair.of("method", "batchAddOrUpdate"));
+    	parameters.add(Pair.of("allDataIdAndContent", allDataIdAndContent));
+    	parameters.add(Pair.of("group", groupName));
         
-    	final String url = getFullUrl("/admin.do?method=batchAddOrUpdate");
-        final HttpInvokeResult httpInvokeResult = PoolingHttpClients.post(url, params, require_timeout);
+        final HttpInvokeResult httpInvokeResult = HttpClientFactory.getHttpClient().post(getAddr(), "/admin", parameters, require_timeout);
 
         // 执行方法并返回http状态码
         int status = httpInvokeResult.getStatusCode();
@@ -858,7 +852,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         String responseMsg = httpInvokeResult.getResponseBodyAsString();
         response.setResponseMsg(responseMsg);
 
-        if (status == HttpStatus.SC_OK) {
+        if (status == Constants.SC_OK) {
             String json = null;
             try {
                 json = responseMsg;
@@ -887,7 +881,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
                         + allDataIdAndContent + ",group=" + groupName + ",json=" + json, e);
             }
         }
-        else if (status == HttpStatus.SC_REQUEST_TIMEOUT) {
+        else if (status == Constants.SC_REQUEST_TIMEOUT) {
             response.setSuccess(false);
             response.setStatusMsg("batch write timeout, socket timeout(ms):" + require_timeout);
             log.error("batch write timeout, socket timeout(ms):" + require_timeout + ", serverId=" + serverId

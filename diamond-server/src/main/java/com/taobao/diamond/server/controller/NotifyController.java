@@ -25,7 +25,7 @@ import com.taobao.diamond.server.service.ConfigService;
  * @date 2010-5-7
  */
 @Controller
-@RequestMapping("/notify.do")
+@RequestMapping("/notify")
 public class NotifyController {
 
     @Autowired

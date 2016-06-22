@@ -39,9 +39,9 @@ import com.taobao.diamond.server.utils.SystemConfig;
 public class NotifyService {
     private static final int TIMEOUT = 5000;
 
-    private final String URL_PREFIX = "/notify.do";
+    private final String URL_PREFIX = "/notify";
 
-    private final String PROTOCOL = "http://";
+    private final String PROTOCOL = Constants.HTTP_PROTOCOL_PREFIX;
 
     private final Properties nodeProperties = new Properties();
 

@@ -15,7 +15,7 @@
   
 </script>
 </head>
-<c:url var="adminUrl" value="admin.do" >
+<c:url var="adminUrl" value="admin" >
 </c:url>
 <c:if test="${method==null}">
     <c:set var="method" value="listConfig"/>
@@ -44,11 +44,11 @@
     </p>
    <p align='center'>
      <c:if test="${page!=null}">
-      <table border='1' width="800">
+      <table border='1' width="95%">
           <tr>
-              <td>dataId</td>
-              <td>组名</td>
-              <td>操作</td>
+              <td width="35%">dataId</td>
+              <td width="35%">组名</td>
+              <td width="30%">操作</td>
           </tr>
           <c:forEach items="${page.pageItems}" var="configInfo">
             <tr>
@@ -58,16 +58,16 @@
               <td name="tagGroup">
                   <c:out value="${configInfo.group}" escapeXml="false"/>
                </td>
-              <c:url var="getConfigInfoUrl" value="admin.do" >
+              <c:url var="getConfigInfoUrl" value="admin" >
                   <c:param name="method" value="detailConfig" />
                   <c:param name="group" value="${configInfo.group}" />
                   <c:param name="dataId" value="${configInfo.dataId}" />
               </c:url>
-               <c:url var="deleteConfigInfoUrl" value="admin.do" >
+               <c:url var="deleteConfigInfoUrl" value="admin" >
                   <c:param name="method" value="deleteConfig" />
                   <c:param name="id" value="${configInfo.id}" />
               </c:url>
-               <c:url var="saveToDiskUrl" value="notify.do" >
+               <c:url var="saveToDiskUrl" value="notify" >
                   <c:param name="method" value="notifyConfigInfo" />
                    <c:param name="group" value="${configInfo.group}" />
                   <c:param name="dataId" value="${configInfo.dataId}" />
@@ -77,9 +77,9 @@
                   <c:param name="dataId" value="${configInfo.dataId}" />
               </c:url>
               <td>
-                 <a href="/${getConfigInfoUrl}">编辑</a>&nbsp;&nbsp;&nbsp;
-                 <a href="/${deleteConfigInfoUrl}" onclick="return confirmForDelete();">删除</a>&nbsp;&nbsp;&nbsp;
-                 <a href="/${saveToDiskUrl}" target="_blank">保存磁盘</a>
+                 <a href="/${getConfigInfoUrl}">编辑</a>&nbsp;
+                 <a href="/${deleteConfigInfoUrl}" onclick="return confirmForDelete();">删除</a>&nbsp;
+                 <a href="/${saveToDiskUrl}" target="_blank">保存磁盘</a>&nbsp;
                  <a href="/${previewUrl}" target="_blank">预览</a>
               </td>
             </tr>
@@ -88,28 +88,28 @@
        <p align='center'>
           总页数:<c:out value="${page.pagesAvailable}"/>&nbsp;&nbsp;当前页:<c:out value="${page.pageNumber}"/>
           &nbsp;&nbsp;&nbsp;&nbsp;
-          <c:url var="nextPage" value="admin.do" >
+          <c:url var="nextPage" value="admin" >
              <c:param name="method" value="${method}" />
              <c:param name="group" value="${group}" />
              <c:param name="dataId" value="${dataId}" />
              <c:param name="pageNo" value="${page.pageNumber+1}" />
              <c:param name="pageSize" value="15" />
          </c:url>
-         <c:url var="prevPage" value="admin.do" >
+         <c:url var="prevPage" value="admin" >
              <c:param name="method" value="${method}" />
              <c:param name="group" value="${group}" />
              <c:param name="dataId" value="${dataId}" />
              <c:param name="pageNo" value="${page.pageNumber-1}" />
              <c:param name="pageSize" value="15" />
          </c:url>
-         <c:url var="firstPage" value="admin.do" >
+         <c:url var="firstPage" value="admin" >
              <c:param name="method" value="${method}" />
              <c:param name="group" value="${group}" />
              <c:param name="dataId" value="${dataId}" />
              <c:param name="pageNo" value="1" />
              <c:param name="pageSize" value="15" />
          </c:url>
-         <c:url var="lastPage" value="admin.do" >
+         <c:url var="lastPage" value="admin" >
              <c:param name="method" value="${method}" />
              <c:param name="group" value="${group}" />
              <c:param name="dataId" value="${dataId}" />

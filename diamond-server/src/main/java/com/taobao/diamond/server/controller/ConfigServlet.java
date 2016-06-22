@@ -30,11 +30,11 @@ public class ConfigServlet extends HttpServlet {
         super.init();
         WebApplicationContext webApplicationContext =
                 WebApplicationContextUtils.getWebApplicationContext(getServletContext());
-        configService = (ConfigService) webApplicationContext.getBean("configService");
+        this.configService = (ConfigService) webApplicationContext.getBean("configService");
         this.diskService = (DiskService) webApplicationContext.getBean("diskService");
-        configController = new ConfigController();
-        this.configController.setConfigService(configService);
-        this.configController.setDiskService(diskService);
+        this.configController = new ConfigController();
+        this.configController.setConfigService(this.configService);
+        this.configController.setDiskService(this.diskService);
     }
 
     private ConfigService configService;
@@ -66,6 +66,11 @@ public class ConfigServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException,
             IOException {
+        final String opaque = request.getHeader(Constants.OPAQUE);
+        if (opaque != null) {
+            response.setHeader(Constants.OPAQUE, opaque);
+        }
+        
         String probeModify = request.getParameter(Constants.PROBE_MODIFY_REQUEST);
         if (!StringUtils.hasLength(probeModify))
             throw new IOException("无效的probeModify");
@@ -76,6 +81,11 @@ public class ConfigServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        final String opaque = request.getHeader(Constants.OPAQUE);
+        if (opaque != null) {
+            response.setHeader(Constants.OPAQUE, opaque);
+        }
+        
         String group = request.getParameter("group");
         String dataId = request.getParameter("dataId");
 

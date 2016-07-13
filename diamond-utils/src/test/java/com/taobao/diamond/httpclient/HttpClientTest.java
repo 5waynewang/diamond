@@ -43,8 +43,7 @@ public class HttpClientTest {
 
 	@Test
 	public void testInvoke() throws Exception {
-//		final String host = "config.ixiaopu.com";
-		final String host = "dev.xiangqutest.com";
+		final String host = "config.ixiaopu.com";
 		final int port = 54321;
 
 		// Prepare the HTTP request.
@@ -60,11 +59,10 @@ public class HttpClientTest {
 
 	@Test
 	public void testPost() throws Exception {
-//		final String host = "config.ixiaopu.com";
-		final String host = "dev.xiangqutest.com";
+		final String host = "config.ixiaopu.com";
 		final int port = 54321;
 
-		Collection<Pair<String, ?>> parameters = new ArrayList<>();
+		Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
 		parameters.add(Pair.of(Constants.PROBE_MODIFY_REQUEST, "MEMCACHEDXIANGQU3e433623c8761a1903e2882afd52377c"));
 
 		final HttpInvokeResult result = this.httpClient.post(host + ":" + port, "/config.co", parameters,
@@ -79,11 +77,10 @@ public class HttpClientTest {
 	
 	@Test
 	public void testGet() throws Exception {
-//		final String host = "config.ixiaopu.com";
-		final String host = "dev.xiangqutest.com";
+		final String host = "config.ixiaopu.com";
 		final int port = 54321;
 
-		Collection<Pair<String, ?>> headers = new ArrayList<>();
+		Collection<Pair<String, ?>> headers = new ArrayList<Pair<String, ?>>();
 		headers.add(Pair.of(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.GZIP));
 
 		final HttpInvokeResult result = this.httpClient.get(host + ":" + port, "/config.co?group=XIANGQU&dataId=GLOBAL", headers,

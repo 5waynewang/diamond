@@ -77,7 +77,6 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             throw new IllegalArgumentException("请求超时时间设置必须大于0[单位(毫秒)]!");
         this.connection_timeout = connection_timeout;
         this.require_timeout = require_timeout;
-        //TODO PoolHttpClients暂不支持单独设置连接超时时间，后续提供
         
         log.info("设置连接超时时间为: " + this.connection_timeout + "毫秒");
     }
@@ -231,7 +230,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
                     + ")进行推送");
 
         // 设置参数
-    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
     	parameters.add(Pair.of("method", "postConfig"));
     	parameters.add(Pair.of("dataId", dataId));
     	parameters.add(Pair.of("group", groupName));
@@ -304,7 +303,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         // 有数据，则修改
         else {
             // 设置参数
-        	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        	final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
         	parameters.add(Pair.of("method", "updateConfig"));
         	parameters.add(Pair.of("dataId", dataId));
         	parameters.add(Pair.of("group", groupName));
@@ -383,7 +382,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
             lastDiamondConf = diamondConf;
             
             // 设置参数
-        	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        	final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
         	parameters.add(Pair.of("method", "login"));
         	parameters.add(Pair.of("username", diamondConf.getDiamondUsername()));
         	parameters.add(Pair.of("password", diamondConf.getDiamondPassword()));
@@ -640,7 +639,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
 
 
     private Collection<Pair<String, ?>> configureGetHeaders() {
-    	final Collection<Pair<String, ?>> headers = new ArrayList<>();
+    	final Collection<Pair<String, ?>> headers = new ArrayList<Pair<String, ?>>();
     	headers.add(Pair.of(Constants.ACCEPT_ENCODING, "gzip,deflate"));
     	headers.add(Pair.of("Accept", "application/json"));
     	return headers;
@@ -746,7 +745,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         }
         
         // 设置参数
-    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
     	parameters.add(Pair.of("method", "batchQuery"));
     	parameters.add(Pair.of("dataIds", dataIdStr));
     	parameters.add(Pair.of("group", groupName));
@@ -839,7 +838,7 @@ public class DiamondSDKManagerImpl implements DiamondSDKManager {
         }
 
         // 设置参数
-    	final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+    	final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
     	parameters.add(Pair.of("method", "batchAddOrUpdate"));
     	parameters.add(Pair.of("allDataIdAndContent", allDataIdAndContent));
     	parameters.add(Pair.of("group", groupName));

@@ -8,7 +8,6 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URLEncoder;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -16,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.logging.Log;
@@ -449,10 +449,10 @@ public class HttpClient {
 			return null;
 		}
 		try {
-			return URLEncoder.encode(Objects.toString(field), Constants.ENCODE);
+			return URLEncoder.encode(ObjectUtils.toString(field), Constants.ENCODE);
 		}
 		catch (UnsupportedEncodingException e) {
-			return URLEncoder.encode(Objects.toString(field));
+			return URLEncoder.encode(ObjectUtils.toString(field));
 		}
 	}
 
@@ -472,7 +472,7 @@ public class HttpClient {
 				final HttpPostRequestEncoder bodyRequestEncoder = new HttpPostRequestEncoder(request, false);
 				for (final Pair<String, ?> parameter : parameters) {
 					bodyRequestEncoder.addBodyAttribute(parameter.getLeft(),
-							Objects.toString(parameter.getRight(), null));
+							ObjectUtils.toString(parameter.getRight(), null));
 					//				final String encodedName = encodeFormFields(parameter.getLeft());
 					//				final String encodedValue = encodeFormFields(parameter.getValue());
 					//				if (result.length() > 0) {

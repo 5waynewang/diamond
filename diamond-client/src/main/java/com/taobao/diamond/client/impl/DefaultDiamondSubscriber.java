@@ -694,7 +694,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
 
 
     private Collection<Pair<String, ?>> configureHttpHeaders(boolean skipContentCache, CacheData cacheData) {
-    	final Collection<Pair<String, ?>> headers = new ArrayList<>();
+    	final Collection<Pair<String, ?>> headers = new ArrayList<Pair<String, ?>>();
         if (skipContentCache && null != cacheData) {
             if (null != cacheData.getLastModifiedHeader() && Constants.NULL != cacheData.getLastModifiedHeader()) {
                 headers.add(Pair.of(Constants.IF_MODIFIED_SINCE, cacheData.getLastModifiedHeader()));
@@ -733,7 +733,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
             return null;
         }
 
-        final Collection<Pair<String, ?>> parameters = new ArrayList<>();
+        final Collection<Pair<String, ?>> parameters = new ArrayList<Pair<String, ?>>();
         parameters.add(Pair.of(Constants.PROBE_MODIFY_REQUEST, probeUpdateString));
         
         while (0 == timeout || timeout > waitTime) {

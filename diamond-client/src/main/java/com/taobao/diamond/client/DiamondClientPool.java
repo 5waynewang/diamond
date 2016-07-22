@@ -26,12 +26,26 @@ public class DiamondClientPool {
 		return getConfigure(dataId, Constants.DEFAULT_GROUP, (ManagerListener[]) null);
 	}
 
+	public static String getConfigure(String dataId, long timeout) {
+
+		return getConfigure(dataId, Constants.DEFAULT_GROUP, timeout, (ManagerListener[]) null);
+	}
+
 	public static String getConfigure(String dataId, ManagerListener... managerListeners) {
 
 		return getConfigure(dataId, Constants.DEFAULT_GROUP, managerListeners);
 	}
 
+	public static String getConfigure(String dataId, long timeout, ManagerListener... managerListeners) {
+
+		return getConfigure(dataId, Constants.DEFAULT_GROUP, timeout, managerListeners);
+	}
+
 	public static String getConfigure(String dataId, String group, ManagerListener... managerListeners) {
+		return getConfigure(dataId, Constants.DEFAULT_GROUP, 0, managerListeners);
+	}
+
+	public static String getConfigure(String dataId, String group, long timeout, ManagerListener... managerListeners) {
 		final String managerKey = managerKey(dataId, group);
 		DiamondManager diamondManager = cache.get(managerKey);
 
@@ -46,8 +60,7 @@ public class DiamondClientPool {
 				diamondManager = oldDiamondManager;
 			}
 		}
-		return diamondManager.getAvailableConfigureInfomation();
-
+		return diamondManager.getAvailableConfigureInfomation(timeout);
 	}
 
 	private static String managerKey(String dataId, String group) {

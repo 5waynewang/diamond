@@ -11,6 +11,7 @@ package com.taobao.diamond.manager.impl;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -114,39 +115,36 @@ public class DefaultDiamondManager implements DiamondManager {
         }
 
     }
-
-    int getDefaultTimeout() {
+    
+    long defaultTimeoutIfInvalid(long timeout) {
+    	if (timeout > 0) {
+    		return timeout;
+    	}
     	return diamondSubscriber.getDiamondConfigure().getOnceTimeout();
     }
 
     public String getConfigureInfomation(long timeout) {
-        return diamondSubscriber.getConfigureInfomation(this.dataId, this.group, timeout);
+        return diamondSubscriber.getConfigureInfomation(this.dataId, this.group, defaultTimeoutIfInvalid(timeout));
     }
 
     public String getConfigureInfomation() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getConfigureInfomation(timeout);
+    	return getConfigureInfomation(0);
     }
 
     public String getAvailableConfigureInfomation(long timeout) {
-        return diamondSubscriber.getAvailableConfigureInfomation(dataId, group, timeout);
+        return diamondSubscriber.getAvailableConfigureInfomation(dataId, group, defaultTimeoutIfInvalid(timeout));
     }
     
     public String getAvailableConfigureInfomation() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getAvailableConfigureInfomation(timeout);
+    	return getAvailableConfigureInfomation(0);
     }
 
     public String getAvailableConfigureInfomationFromSnapshot(long timeout) {
-        return diamondSubscriber.getAvailableConfigureInfomationFromSnapshot(dataId, group, timeout);
+        return diamondSubscriber.getAvailableConfigureInfomationFromSnapshot(dataId, group, defaultTimeoutIfInvalid(timeout));
     }
 
     public String getAvailableConfigureInfomationFromSnapshot() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getAvailableConfigureInfomationFromSnapshot(timeout);
+    	return getAvailableConfigureInfomationFromSnapshot(0);
     }
 
     public Properties getAvailablePropertiesConfigureInfomation(long timeout) {
@@ -168,9 +166,7 @@ public class DefaultDiamondManager implements DiamondManager {
     }
 
     public Properties getAvailablePropertiesConfigureInfomation() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getAvailablePropertiesConfigureInfomation(timeout);
+    	return getAvailablePropertiesConfigureInfomation(0);
     }
 
     public Properties getAvailablePropertiesConfigureInfomationFromSnapshot(long timeout) {
@@ -192,21 +188,34 @@ public class DefaultDiamondManager implements DiamondManager {
     }
 
     public Properties getAvailablePropertiesConfigureInfomationFromSnapshot() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getAvailablePropertiesConfigureInfomationFromSnapshot(timeout);
+    	return getAvailablePropertiesConfigureInfomationFromSnapshot(0);
     }
 
     public void setManagerListeners(List<ManagerListener> managerListenerList) {
-        this.managerListeners.clear();
+    	clearManagerListeners();
+    	
         this.managerListeners.addAll(managerListenerList);
-
-        ((DefaultSubscriberListener) diamondSubscriber.getSubscriberListener()).removeManagerListeners(this.dataId,
-            this.group);
         ((DefaultSubscriberListener) diamondSubscriber.getSubscriberListener()).addManagerListeners(this.dataId,
             this.group, this.managerListeners);
     }
 
+    public void clearManagerListeners() {
+    	this.managerListeners.clear();
+    	((DefaultSubscriberListener) diamondSubscriber.getSubscriberListener()).removeManagerListeners(this.dataId,
+                this.group);
+    }
+    
+    public void addManagerListener(ManagerListener managerListener) {
+    	this.managerListeners.add(managerListener);
+    	((DefaultSubscriberListener) diamondSubscriber.getSubscriberListener()).addManagerListener(this.dataId,
+                this.group, managerListener);
+    }
+    
+    public void addManagerListeners(List<ManagerListener> managerListenerList) {
+    	this.managerListeners.addAll(managerListenerList);
+    	((DefaultSubscriberListener) diamondSubscriber.getSubscriberListener()).addManagerListeners(this.dataId,
+                this.group, managerListenerList);
+    }
 
     public DiamondConfigure getDiamondConfigure() {
         return diamondSubscriber.getDiamondConfigure();
@@ -237,13 +246,11 @@ public class DefaultDiamondManager implements DiamondManager {
     }
 
     public Properties getPropertiesConfigureInfomation() {
-    	final int timeout = getDefaultTimeout();
-    	
-    	return getPropertiesConfigureInfomation(timeout);
+    	return getPropertiesConfigureInfomation(0);
     }
 
     public List<ManagerListener> getManagerListeners() {
-        return this.managerListeners;
+        return Collections.unmodifiableList(this.managerListeners);
     }
 
 }

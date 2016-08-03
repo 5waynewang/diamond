@@ -596,7 +596,7 @@ class DefaultDiamondSubscriber implements DiamondSubscriber {
                 rotateToNextDomain();
             }
         }
-        throw new RuntimeException("获取ConfigureInfomation超时, DataID" + dataId + ", Group为：" + group + ",超时时间为：" + timeout);
+        throw new RuntimeException("获取ConfigureInfomation超时, DataID：" + dataId + ", Group为：" + group + ",超时时间为：" + timeout);
     }
 
 

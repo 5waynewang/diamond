@@ -46,5 +46,10 @@
 			<groupId>io.netty</groupId>
 			<artifactId>netty-all</artifactId>
 		</dependency>
+		<!-- netty jdk6默认的压缩包 -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jzlib</artifactId>
+		</dependency>
 	</dependencies>
 </project>

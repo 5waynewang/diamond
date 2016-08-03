@@ -254,6 +254,12 @@
 				<artifactId>netty-all</artifactId>
 				<version>4.0.36.Final</version>
 			</dependency>
+			<!-- netty jdk6默认的压缩包 -->
+			<dependency>
+				<groupId>com.jcraft</groupId>
+				<artifactId>jzlib</artifactId>
+				<version>1.1.3</version>
+			</dependency>
 			<!-- aspectj -->
 			<dependency>
 				<groupId>org.aspectj</groupId>
@@ -337,6 +343,12 @@
 		<repository>
 			<id>xiangqu</id>
 			<url>http://nexus.ixiaopu.com:8081/nexus/content/groups/public-xiangqu/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
 		</repository>
         <repository>
             <id>central</id>
@@ -349,40 +361,9 @@
             </snapshots>
         </repository>
         <repository>
-            <id>java.net</id>
-            <url>http://download.java.net/maven/2/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>alibaba</id>
-            <url>http://code.alibabatech.com/mvn/releases/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>sonatype</id>
             <name>sonatype</name>
             <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>sonatype-release</id>
-            <name>sonatype-release</name>
-            <url>https://oss.sonatype.org/service/local/repositories/releases/content</url>
             <releases>
                 <enabled>false</enabled>
             </releases>

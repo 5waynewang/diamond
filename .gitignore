@@ -2,5 +2,5 @@ target
 .settings
 .project
 .classpath
-.log
+*.log
 diamond-server/src/main/webapp/config-data/**

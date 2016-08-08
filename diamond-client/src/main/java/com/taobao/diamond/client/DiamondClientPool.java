@@ -51,7 +51,7 @@ public class DiamondClientPool {
 
 		if (diamondManager == null) {
 
-			diamondManager = DiamondClients.createSafeDiamondManager(dataId, group, managerListeners);
+			diamondManager = DiamondClients.createSafeDiamondManager(group, dataId, managerListeners);
 
 			final DiamondManager oldDiamondManager = cache.putIfAbsent(managerKey, diamondManager);
 
